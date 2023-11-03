@@ -203,7 +203,7 @@ statefulset:
   podManagementPolicy: Parallel
   ## @param statefulset.replicaCount Number of pods per zone (only for MinIO&reg; distributed mode). Should be even and `>= 4`
   ##
-  replicaCount: 6
+  replicaCount: 4
   ## @param statefulset.zones Number of zones (only for MinIO&reg; distributed mode)
   ##
   zones: 1
@@ -620,8 +620,8 @@ service:
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ##
   nodePorts:
-    api: "30201"
-    console: "30202"
+    api: "30301"
+    console: "30302"
   ## @param service.clusterIP Service Cluster IP
   ## e.g.:
   ## clusterIP: None
