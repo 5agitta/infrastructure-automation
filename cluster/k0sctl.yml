@@ -8,23 +8,23 @@ spec:
     installFlags:
       - --disable-components=metrics-server,kube-proxy
     ssh:
-      address: 35.247.186.155
-      user: coreos
+      address: 10.240.0.10
+      user: core
       keyPath: ~/.ssh/gcloud
   - role: controller
     ssh:
-      address: 35.198.238.185
-      user: coreos
+      address: 10.240.0.11
+      user: core
       keyPath: ~/.ssh/gcloud
   - role: worker
     ssh:
-      address: 34.124.165.24
-      user: coreos
+      address: 10.240.0.138
+      user: core
       keyPath: ~/.ssh/gcloud
   - role: worker
     ssh:
-      address: 34.124.218.189
-      user: coreos
+      address: 10.240.0.139
+      user: core
       keyPath: ~/.ssh/gcloud
 
   k0s:
@@ -38,11 +38,11 @@ spec:
         name: sagitta
       spec:
         api:
-          address: 35.247.186.155
+          address: 10.240.0.10
           k0sApiPort: 9443
           port: 6443
           sans:
-          - 35.247.186.155
+          - 10.240.0.10
         controllerManager: {}
         extensions:
           helm:

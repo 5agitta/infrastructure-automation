@@ -67,7 +67,7 @@ serviceAccounts:
     create: true
     name: cilium
     automount: true
-    annotations: { }
+    annotations: {}
   nodeinit:
     create: true
     # -- Enabled is temporary until https://github.com/cilium/cilium-cli/issues/1396 is implemented.
@@ -78,54 +78,54 @@ serviceAccounts:
     enabled: false
     name: cilium-nodeinit
     automount: true
-    annotations: { }
+    annotations: {}
   envoy:
     create: true
     name: cilium-envoy
     automount: true
-    annotations: { }
+    annotations: {}
   etcd:
     create: true
     name: cilium-etcd-operator
     automount: true
-    annotations: { }
+    annotations: {}
   operator:
     create: true
     name: cilium-operator
     automount: true
-    annotations: { }
+    annotations: {}
   preflight:
     create: true
     name: cilium-pre-flight
     automount: true
-    annotations: { }
+    annotations: {}
   relay:
     create: true
     name: hubble-relay
     automount: false
-    annotations: { }
+    annotations: {}
   ui:
     create: true
     name: hubble-ui
     automount: true
-    annotations: { }
+    annotations: {}
   clustermeshApiserver:
     create: true
     name: clustermesh-apiserver
     automount: true
-    annotations: { }
+    annotations: {}
   # -- Clustermeshcertgen is used if clustermesh.apiserver.tls.auto.method=cronJob
   clustermeshcertgen:
     create: true
     name: clustermesh-apiserver-generate-certs
     automount: true
-    annotations: { }
+    annotations: {}
   # -- Hubblecertgen is used if hubble.tls.auto.method=cronJob
   hubblecertgen:
     create: true
     name: hubble-generate-certs
     automount: true
-    annotations: { }
+    annotations: {}
 
 # -- Configure termination grace period for cilium-agent DaemonSet.
 terminationGracePeriodSeconds: 1
@@ -143,7 +143,7 @@ rollOutCiliumPods: false
 image:
   override: ~
   repository: "quay.io/cilium/cilium"
-  tag: "v1.14.1"
+  tag: "v1.14.3"
   pullPolicy: "IfNotPresent"
   # cilium-digest
   digest: ""
@@ -153,10 +153,10 @@ image:
 affinity:
   podAntiAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
-      - topologyKey: kubernetes.io/hostname
-        labelSelector:
-          matchLabels:
-            k8s-app: cilium
+    - topologyKey: kubernetes.io/hostname
+      labelSelector:
+        matchLabels:
+          k8s-app: cilium
 
 # -- Node selector for cilium-agent.
 nodeSelector:
@@ -165,11 +165,11 @@ nodeSelector:
 # -- Node tolerations for agent scheduling to nodes with taints
 # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations:
-  - operator: Exists
-    # - key: "key"
-    #   operator: "Equal|Exists"
-    #   value: "value"
-    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+- operator: Exists
+  # - key: "key"
+  #   operator: "Equal|Exists"
+  #   value: "value"
+  #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
 
 # -- The priority class to use for cilium-agent.
 priorityClassName: ""
@@ -179,32 +179,32 @@ priorityClassName: ""
 dnsPolicy: ""
 
 # -- Additional containers added to the cilium DaemonSet.
-extraContainers: [ ]
+extraContainers: []
 
 # -- Additional agent container arguments.
-extraArgs: [ ]
+extraArgs: []
 
 # -- Additional agent container environment variables.
-extraEnv: [ ]
+extraEnv: []
 
 # -- Additional agent hostPath mounts.
-extraHostPathMounts: [ ]
+extraHostPathMounts: []
   # - name: host-mnt-data
   #   mountPath: /host/mnt/data
   #   hostPath: /mnt/data
   #   hostPathType: Directory
-#   readOnly: true
-#   mountPropagation: HostToContainer
+  #   readOnly: true
+  #   mountPropagation: HostToContainer
 
 # -- Additional agent volumes.
-extraVolumes: [ ]
+extraVolumes: []
 
 # -- Additional agent volumeMounts.
-extraVolumeMounts: [ ]
+extraVolumeMounts: []
 
 # -- extraConfig allows you to specify additional configuration parameters to be
 # included in the cilium-config configmap.
-extraConfig: { }
+extraConfig: {}
 #  my-config-a: "1234"
 #  my-config-b: |-
 #    test 1
@@ -212,23 +212,23 @@ extraConfig: { }
 #    test 3
 
 # -- Security Context for cilium-agent pods.
-podSecurityContext: { }
+podSecurityContext: {}
 
 # -- Annotations to be added to agent pods
-podAnnotations: { }
+podAnnotations: {}
 
 # -- Labels to be added to agent pods
-podLabels: { }
+podLabels: {}
 
 # -- Agent resource limits & requests
 # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-resources: { }
+resources: {}
   # limits:
   #   cpu: 4000m
   #   memory: 4Gi
   # requests:
-#   cpu: 100m
-#   memory: 512Mi
+  #   cpu: 100m
+  #   memory: 512Mi
 
 securityContext:
   # -- User to run the pod with
@@ -591,6 +591,12 @@ cni:
 # @default -- `"0s"`
 conntrackGCInterval: ""
 
+# -- (string) Configure the maximum frequency for the garbage collection of the
+# connection tracking table. Only affects the automatic computation for the frequency
+# and has no effect when 'conntrackGCInterval' is set. This can be set to more frequently
+# clean up unused identities created from ToFQDN policies.
+conntrackGCMaxInterval: ""
+
 # -- Configure container runtime specific integration.
 # Deprecated in favor of bpf.autoMount.enabled. To be removed in 1.15.
 containerRuntime:
@@ -688,11 +694,11 @@ envoyConfig:
 ingressController:
   # -- Enable cilium ingress controller
   # This will automatically set enable-envoy-config as well.
-  enabled: true
+  enabled: false
 
   # -- Set cilium ingress controller to be the default ingress controller
   # This will let cilium ingress controller route entries without ingress class set
-  default: true
+  default: false
 
   # -- Default ingress load balancer mode
   # Supported values: shared, dedicated
@@ -706,7 +712,7 @@ ingressController:
 
   # -- IngressLBAnnotations are the annotation prefixes, which are used to filter annotations to propagate
   # from Ingress to the Load Balancer service
-  ingressLBAnnotationPrefixes: [ 'service.beta.kubernetes.io', 'service.kubernetes.io', 'cloud.google.com' ]
+  ingressLBAnnotationPrefixes: ['service.beta.kubernetes.io', 'service.kubernetes.io', 'cloud.google.com']
 
   # -- Default secret namespace for ingresses without .spec.tls[].secretName set.
   defaultSecretNamespace:
@@ -732,19 +738,19 @@ ingressController:
     # -- Service name
     name: cilium-ingress
     # -- Labels to be added for the shared LB service
-    labels: { }
+    labels: {}
     # -- Annotations to be added for the shared LB service
-    annotations: { }
+    annotations: {}
     # -- Service type for the shared LB service
     type: LoadBalancer
     # -- Configure a specific nodePort for insecure HTTP traffic on the shared LB service
     insecureNodePort: ~
     # -- Configure a specific nodePort for secure HTTPS traffic on the shared LB service
-    secureNodePort: ~
+    secureNodePort : ~
     # -- Configure a specific loadBalancerClass on the shared LB service (requires Kubernetes 1.24+)
     loadBalancerClass: ~
     # -- Configure a specific loadBalancerIP on the shared LB service
-    loadBalancerIP: ~
+    loadBalancerIP : ~
     # -- Configure if node port allocation is required for LB service
     # ref: https://kubernetes.io/docs/concepts/services-networking/service/#load-balancer-nodeport-allocation
     allocateLoadBalancerNodePorts: ~
@@ -859,14 +865,14 @@ eni:
   # -- EC2 API endpoint to use
   ec2APIEndpoint: ""
   # -- Tags to apply to the newly created ENIs
-  eniTags: { }
+  eniTags: {}
   # -- Interval for garbage collection of unattached ENIs. Set to "0s" to disable.
   # @default -- `"5m"`
   gcInterval: ""
   # -- Additional tags attached to ENIs created by Cilium.
   # Dangling ENIs with this tag will be garbage collected
   # @default -- `{"io.cilium/cilium-managed":"true,"io.cilium/cluster-name":"<auto-detected>"}`
-  gcTags: { }
+  gcTags: {}
   # -- If using IAM role for Service Accounts will not try to
   # inject identity values from cilium-aws kubernetes secret.
   # Adds annotation to service account if managed by Helm.
@@ -876,15 +882,15 @@ eni:
   # Important note: This requires that each instance has an ENI with a matching subnet attached
   # when Cilium is deployed. If you only want to control subnets for ENIs attached by Cilium,
   # use the CNI configuration file settings (cni.customConf) instead.
-  subnetIDsFilter: [ ]
+  subnetIDsFilter: []
   # -- Filter via tags (k=v) which will dictate which subnets are going to be used to create new ENIs
   # Important note: This requires that each instance has an ENI with a matching subnet attached
   # when Cilium is deployed. If you only want to control subnets for ENIs attached by Cilium,
   # use the CNI configuration file settings (cni.customConf) instead.
-  subnetTagsFilter: [ ]
+  subnetTagsFilter: []
   # -- Filter via AWS EC2 Instance tags (k=v) which will dictate which AWS EC2 Instances
   # are going to be used to create new ENIs
-  instanceTagsFilter: [ ]
+  instanceTagsFilter: []
 
 externalIPs:
   # -- Enable ExternalIPs service support.
@@ -928,27 +934,27 @@ certgen:
   image:
     override: ~
     repository: "quay.io/cilium/certgen"
-    tag: "v0.1.8"
-    digest: "sha256:4a456552a5f192992a6edcec2febb1c54870d665173a33dc7d876129b199ddbd"
+    tag: "v0.1.9"
+    digest: "sha256:89a0847753686444daabde9474b48340993bd19c7bea66a46e45b2974b82041f"
     useDigest: true
     pullPolicy: "IfNotPresent"
   # -- Seconds after which the completed job pod will be deleted
   ttlSecondsAfterFinished: 1800
   # -- Labels to be added to hubble-certgen pods
-  podLabels: { }
+  podLabels: {}
   # -- Annotations to be added to the hubble-certgen initial Job and CronJob
   annotations:
-    job: { }
-    cronJob: { }
+    job: {}
+    cronJob: {}
   # -- Node tolerations for pod assignment on nodes with taints
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-  tolerations: [ ]
+  tolerations: []
 
   # -- Additional certgen volumes.
-  extraVolumes: [ ]
+  extraVolumes: []
 
   # -- Additional certgen volumeMounts.
-  extraVolumeMounts: [ ]
+  extraVolumeMounts: []
 
 hubble:
   # -- Enable Hubble (true by default).
@@ -990,16 +996,16 @@ hubble:
     # -- Configure the port the hubble metric server listens on.
     port: 9965
     # -- Annotations to be added to hubble-metrics service.
-    serviceAnnotations: { }
+    serviceAnnotations: {}
     serviceMonitor:
       # -- Create ServiceMonitor resources for Prometheus Operator.
       # This requires the prometheus CRDs to be available.
       # ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
       enabled: false
       # -- Labels to add to ServiceMonitor hubble
-      labels: { }
+      labels: {}
       # -- Annotations to add to ServiceMonitor hubble
-      annotations: { }
+      annotations: {}
       # -- Interval for scrape metrics.
       interval: "10s"
       # -- Relabeling configs for the ServiceMonitor hubble
@@ -1018,7 +1024,7 @@ hubble:
       label: grafana_dashboard
       namespace: ~
       labelValue: "1"
-      annotations: { }
+      annotations: {}
 
   # -- Unix domain socket path to listen to when Hubble is enabled.
   socketPath: /var/run/cilium/hubble.sock
@@ -1082,16 +1088,16 @@ hubble:
       #   kind: ClusterIssuer
       #   name: ca-issuer
       # -- certmanager issuer used when hubble.tls.auto.method=certmanager.
-      certManagerIssuerRef: { }
+      certManagerIssuerRef: {}
 
     # -- base64 encoded PEM values for the Hubble server certificate and private key
     server:
       cert: ""
       key: ""
       # -- Extra DNS names added to certificate when it's auto generated
-      extraDnsNames: [ ]
+      extraDnsNames: []
       # -- Extra IP addresses added to certificate when it's auto generated
-      extraIpAddresses: [ ]
+      extraIpAddresses: []
 
   relay:
     # -- Enable Hubble Relay (requires hubble.enabled=true)
@@ -1104,14 +1110,14 @@ hubble:
     image:
       override: ~
       repository: "quay.io/cilium/hubble-relay"
-      tag: "v1.14.1"
-      # hubble-relay-digest
+      tag: "v1.14.3"
+       # hubble-relay-digest
       digest: ""
       useDigest: false
       pullPolicy: "IfNotPresent"
 
     # -- Specifies the resources for the hubble-relay pods
-    resources: { }
+    resources: {}
 
     # -- Number of replicas run for the hubble-relay deployment.
     replicas: 1
@@ -1120,16 +1126,16 @@ hubble:
     affinity:
       podAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
-          - topologyKey: kubernetes.io/hostname
-            labelSelector:
-              matchLabels:
-                k8s-app: cilium
+        - topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchLabels:
+              k8s-app: cilium
 
     # -- Pod topology spread constraints for hubble-relay
-    topologySpreadConstraints: [ ]
+    topologySpreadConstraints: []
       # - maxSkew: 1
-    #   topologyKey: topology.kubernetes.io/zone
-    #   whenUnsatisfiable: DoNotSchedule
+      #   topologyKey: topology.kubernetes.io/zone
+      #   whenUnsatisfiable: DoNotSchedule
 
     # -- Node labels for pod assignment
     # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -1138,16 +1144,16 @@ hubble:
 
     # -- Node tolerations for pod assignment on nodes with taints
     # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-    tolerations: [ ]
+    tolerations: []
 
     # -- Additional hubble-relay environment variables.
-    extraEnv: [ ]
+    extraEnv: []
 
     # -- Annotations to be added to hubble-relay pods
-    podAnnotations: { }
+    podAnnotations: {}
 
     # -- Labels to be added to hubble-relay pods
-    podLabels: { }
+    podLabels: {}
 
     # PodDisruptionBudget settings
     podDisruptionBudget:
@@ -1184,12 +1190,12 @@ hubble:
       runAsGroup: 65532
       capabilities:
         drop:
-          - ALL
+        - ALL
 
     # -- hubble-relay service configuration.
     service:
       # --- The type of service used for Hubble Relay access, either ClusterIP or NodePort.
-      type: ClusterIP
+      type: NodePort
       # --- The port to use when the service type is set to NodePort.
       nodePort: 31234
 
@@ -1221,9 +1227,9 @@ hubble:
         cert: ""
         key: ""
         # -- extra DNS names added to certificate when its auto gen
-        extraDnsNames: [ ]
+        extraDnsNames: []
         # -- extra IP addresses added to certificate when its auto gen
-        extraIpAddresses: [ ]
+        extraIpAddresses: []
 
     # -- Dial timeout to connect to the local hubble instance to receive peer information (e.g. "30s").
     dialTimeout: ~
@@ -1254,9 +1260,9 @@ hubble:
         # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
         enabled: false
         # -- Labels to add to ServiceMonitor hubble-relay
-        labels: { }
+        labels: {}
         # -- Annotations to add to ServiceMonitor hubble-relay
-        annotations: { }
+        annotations: {}
         # -- Interval for scrape metrics.
         interval: "10s"
         # -- Specify the Kubernetes namespace where Prometheus expects to find
@@ -1295,7 +1301,7 @@ hubble:
       tls:
         # -- When deploying Hubble UI in standalone, with tls enabled for Hubble relay, it is required
         # to provide a volume for mounting the client certificates.
-        certsVolume: { }
+        certsVolume: {}
           # projected:
           #   defaultMode: 0400
           #   sources:
@@ -1306,8 +1312,8 @@ hubble:
           #         path: client.crt
           #       - key: tls.key
           #         path: client.key
-        #       - key: ca.crt
-        #         path: hubble-relay-ca.crt
+          #       - key: ca.crt
+          #         path: hubble-relay-ca.crt
 
     # -- Roll out Hubble-ui pods automatically when configmap is updated.
     rollOutPods: false
@@ -1326,25 +1332,25 @@ hubble:
       image:
         override: ~
         repository: "quay.io/cilium/hubble-ui-backend"
-        tag: "v0.12.0"
-        digest: "sha256:8a79a1aad4fc9c2aa2b3e4379af0af872a89fcec9d99e117188190671c66fc2e"
+        tag: "v0.12.1"
+        digest: "sha256:1f86f3400827a0451e6332262467f894eeb7caf0eb8779bd951e2caa9d027cbe"
         useDigest: true
         pullPolicy: "IfNotPresent"
 
       # -- Hubble-ui backend security context.
-      securityContext: { }
+      securityContext: {}
 
       # -- Additional hubble-ui backend environment variables.
-      extraEnv: [ ]
+      extraEnv: []
 
       # -- Additional hubble-ui backend volumes.
-      extraVolumes: [ ]
+      extraVolumes: []
 
       # -- Additional hubble-ui backend volumeMounts.
-      extraVolumeMounts: [ ]
+      extraVolumeMounts: []
 
       # -- Resource requests and limits for the 'backend' container of the 'hubble-ui' deployment.
-      resources: { }
+      resources: {}
       #   limits:
       #     cpu: 1000m
       #     memory: 1024M
@@ -1357,25 +1363,25 @@ hubble:
       image:
         override: ~
         repository: "quay.io/cilium/hubble-ui"
-        tag: "v0.12.0"
-        digest: "sha256:1c876cfa1d5e35bc91e1025c9314f922041592a88b03313c22c1f97a5d2ba88f"
+        tag: "v0.12.1"
+        digest: "sha256:9e5f81ee747866480ea1ac4630eb6975ff9227f9782b7c93919c081c33f38267"
         useDigest: true
         pullPolicy: "IfNotPresent"
 
       # -- Hubble-ui frontend security context.
-      securityContext: { }
+      securityContext: {}
 
       # -- Additional hubble-ui frontend environment variables.
-      extraEnv: [ ]
+      extraEnv: []
 
       # -- Additional hubble-ui frontend volumes.
-      extraVolumes: [ ]
+      extraVolumes: []
 
       # -- Additional hubble-ui frontend volumeMounts.
-      extraVolumeMounts: [ ]
+      extraVolumeMounts: []
 
       # -- Resource requests and limits for the 'frontend' container of the 'hubble-ui' deployment.
-      resources: { }
+      resources: {}
       #   limits:
       #     cpu: 1000m
       #     memory: 1024M
@@ -1391,10 +1397,10 @@ hubble:
     replicas: 1
 
     # -- Annotations to be added to hubble-ui pods
-    podAnnotations: { }
+    podAnnotations: {}
 
     # -- Labels to be added to hubble-ui pods
-    podLabels: { }
+    podLabels: {}
 
     # PodDisruptionBudget settings
     podDisruptionBudget:
@@ -1408,13 +1414,13 @@ hubble:
       maxUnavailable: 1
 
     # -- Affinity for hubble-ui
-    affinity: { }
+    affinity: {}
 
     # -- Pod topology spread constraints for hubble-ui
-    topologySpreadConstraints: [ ]
+    topologySpreadConstraints: []
       # - maxSkew: 1
-    #   topologyKey: topology.kubernetes.io/zone
-    #   whenUnsatisfiable: DoNotSchedule
+      #   topologyKey: topology.kubernetes.io/zone
+      #   whenUnsatisfiable: DoNotSchedule
 
     # -- Node labels for pod assignment
     # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -1423,7 +1429,7 @@ hubble:
 
     # -- Node tolerations for pod assignment on nodes with taints
     # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-    tolerations: [ ]
+    tolerations: []
 
     # -- The priority class to use for hubble-ui
     priorityClassName: ""
@@ -1443,11 +1449,11 @@ hubble:
     # -- hubble-ui service configuration.
     service:
       # -- Annotations to be added for the Hubble UI service
-      annotations: { }
+      annotations: {}
       # --- The type of service used for Hubble UI access, either ClusterIP or NodePort.
-      type: ClusterIP
+      type: NodePort
       # --- The port to use when the service type is set to NodePort.
-      nodePort: 31235
+      nodePort: 30201
 
     # -- Defines base url prefix for all hubble-ui http requests.
     # It needs to be changed in case if ingress for hubble-ui is configured under some sub-path.
@@ -1457,14 +1463,14 @@ hubble:
     # -- hubble-ui ingress configuration.
     ingress:
       enabled: false
-      annotations: { }
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+      annotations: {}
+        # kubernetes.io/ingress.class: nginx
+        # kubernetes.io/tls-acme: "true"
       className: ""
       hosts:
         - chart-example.local
-      labels: { }
-      tls: [ ]
+      labels: {}
+      tls: []
       #  - secretName: chart-example-tls
       #    hosts:
       #      - chart-example.local
@@ -1499,7 +1505,7 @@ ipam:
     # -- IPv6 CIDR mask size to delegate to individual nodes for IPAM.
     clusterPoolIPv6MaskSize: 119
     # -- IP pools to auto-create in multi-pool IPAM mode.
-    autoCreateCiliumPodIPPools: { }
+    autoCreateCiliumPodIPPools: {}
       # default:
       #   ipv4:
       #     cidrs:
@@ -1508,8 +1514,8 @@ ipam:
       # other:
       #   ipv6:
       #     cidrs:
-    #       - fd00:100::/80
-    #     maskSize: 96
+      #       - fd00:100::/80
+      #     maskSize: 96
     # -- The maximum burst size when rate limiting access to external APIs.
     # Also known as the token bucket capacity.
     # @default -- `20`
@@ -1523,8 +1529,8 @@ ipam:
 # -- Configure the eBPF-based ip-masq-agent
 ipMasqAgent:
   enabled: false
-  # the config of nonMasqueradeCIDRs
-  # config:
+# the config of nonMasqueradeCIDRs
+# config:
   # nonMasqueradeCIDRs: []
   # masqLinkLocal: false
   # masqLinkLocalIPv6: false
@@ -1541,14 +1547,14 @@ ipv6:
   enabled: false
 
 # -- Configure Kubernetes specific configuration
-k8s: { }
+k8s: {}
   # -- requireIPv4PodCIDR enables waiting for Kubernetes to provide the PodCIDR
   # range via the Kubernetes node resource
   # requireIPv4PodCIDR: false
 
   # -- requireIPv6PodCIDR enables waiting for Kubernetes to provide the PodCIDR
-# range via the Kubernetes node resource
-# requireIPv6PodCIDR: false
+  # range via the Kubernetes node resource
+  # requireIPv6PodCIDR: false
 
 # -- Keep the deprecated selector labels when deploying Cilium DaemonSet.
 keepDeprecatedLabels: false
@@ -1607,13 +1613,13 @@ localRedirectPolicy: false
 logSystemLoad: false
 
 # -- Configure maglev consistent hashing
-maglev: { }
+maglev: {}
   # -- tableSize is the size (parameter M) for the backend table of one
   # service entry
   # tableSize:
 
-# -- hashSeed is the cluster-wide base64 encoded seed for the hashing
-# hashSeed:
+  # -- hashSeed is the cluster-wide base64 encoded seed for the hashing
+  # hashSeed:
 
 # -- Enables masquerading of IPv4 traffic leaving the node from endpoints.
 enableIPv4Masquerade: true
@@ -1640,17 +1646,17 @@ egressGateway:
   # maxPolicyEntries: 16384
 
 vtep:
-  # -- Enables VXLAN Tunnel Endpoint (VTEP) Integration (beta) to allow
-  # Cilium-managed pods to talk to third party VTEP devices over Cilium tunnel.
+# -- Enables VXLAN Tunnel Endpoint (VTEP) Integration (beta) to allow
+# Cilium-managed pods to talk to third party VTEP devices over Cilium tunnel.
   enabled: false
 
-  # -- A space separated list of VTEP device endpoint IPs, for example "1.1.1.1  1.1.2.1"
+# -- A space separated list of VTEP device endpoint IPs, for example "1.1.1.1  1.1.2.1"
   endpoint: ""
-  # -- A space separated list of VTEP device CIDRs, for example "1.1.1.0/24 1.1.2.0/24"
+# -- A space separated list of VTEP device CIDRs, for example "1.1.1.0/24 1.1.2.0/24"
   cidr: ""
-  # -- VTEP CIDRs Mask that applies to all VTEP CIDRs, for example "255.255.255.0"
+# -- VTEP CIDRs Mask that applies to all VTEP CIDRs, for example "255.255.255.0"
   mask: ""
-  # -- A space separated list of VTEP device MAC addresses (VTEP MAC), for example "x:x:x:x:x:x  y:y:y:y:y:y:y"
+# -- A space separated list of VTEP device MAC addresses (VTEP MAC), for example "x:x:x:x:x:x  y:y:y:y:y:y:y"
   mac: ""
 
 # -- (string) Allows to explicitly specify the IPv4 CIDR for native routing.
@@ -1722,7 +1728,7 @@ loadBalancer:
     # -- List of ports from service to be automatically redirected to above backend.
     # Any service exposing one of these ports will be automatically redirected.
     # Fine-grained control can be achieved by using the service annotation.
-    ports: [ ]
+    ports: []
     # -- Default LB algorithm
     # The default LB algorithm to be used for services, which can be overridden by the
     # service annotation (e.g. service.cilium.io/lb-l7-algorithm)
@@ -1771,9 +1777,9 @@ prometheus:
     # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
     enabled: false
     # -- Labels to add to ServiceMonitor cilium-agent
-    labels: { }
+    labels: {}
     # -- Annotations to add to ServiceMonitor cilium-agent
-    annotations: { }
+    annotations: {}
     # -- Interval for scrape metrics.
     interval: "10s"
     # -- Specify the Kubernetes namespace where Prometheus expects to find
@@ -1804,7 +1810,7 @@ dashboards:
   label: grafana_dashboard
   namespace: ~
   labelValue: "1"
-  annotations: { }
+  annotations: {}
 
 # -- Configure Istio proxy options.
 proxy:
@@ -1843,34 +1849,34 @@ envoy:
   image:
     override: ~
     repository: "quay.io/cilium/cilium-envoy"
-    tag: "v1.25.9-f039e2bd380b7eef2f2feea5750676bb36133699"
+    tag: "v1.25.10-f71a313bd0daee41470af31ce6ea20c750fe35dd"
     pullPolicy: "IfNotPresent"
-    digest: "sha256:023d09eeb8a44ae99b489f4af7ffed8b8b54f19a532e0bc6ab4c1e4b31acaab1"
+    digest: "sha256:bfa1e919ed02afc66e9ff36c1fd9148237fc8b8560a0b44d89acf144b0ffb08c"
     useDigest: true
 
   # -- Additional containers added to the cilium Envoy DaemonSet.
-  extraContainers: [ ]
+  extraContainers: []
 
   # -- Additional envoy container arguments.
-  extraArgs: [ ]
+  extraArgs: []
 
   # -- Additional envoy container environment variables.
-  extraEnv: [ ]
+  extraEnv: []
 
   # -- Additional envoy hostPath mounts.
-  extraHostPathMounts: [ ]
+  extraHostPathMounts: []
     # - name: host-mnt-data
     #   mountPath: /host/mnt/data
     #   hostPath: /mnt/data
     #   hostPathType: Directory
-  #   readOnly: true
-  #   mountPropagation: HostToContainer
+    #   readOnly: true
+    #   mountPropagation: HostToContainer
 
   # -- Additional envoy volumes.
-  extraVolumes: [ ]
+  extraVolumes: []
 
   # -- Additional envoy volumeMounts.
-  extraVolumeMounts: [ ]
+  extraVolumeMounts: []
 
   # -- Configure termination grace period for cilium-envoy DaemonSet.
   terminationGracePeriodSeconds: 1
@@ -1888,23 +1894,23 @@ envoy:
   rollOutPods: false
 
   # -- Security Context for cilium-envoy pods.
-  podSecurityContext: { }
+  podSecurityContext: {}
 
   # -- Annotations to be added to envoy pods
-  podAnnotations: { }
+  podAnnotations: {}
 
   # -- Labels to be added to envoy pods
-  podLabels: { }
+  podLabels: {}
 
   # -- Envoy resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-  resources: { }
+  resources: {}
     # limits:
     #   cpu: 4000m
     #   memory: 4Gi
     # requests:
-  #   cpu: 100m
-  #   memory: 512Mi
+    #   cpu: 100m
+    #   memory: 512Mi
 
   startupProbe:
     # -- failure threshold of startup probe.
@@ -1954,10 +1960,10 @@ envoy:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-        - topologyKey: kubernetes.io/hostname
-          labelSelector:
-            matchLabels:
-              k8s-app: cilium-envoy
+      - topologyKey: kubernetes.io/hostname
+        labelSelector:
+          matchLabels:
+            k8s-app: cilium-envoy
 
   # -- Node selector for cilium-envoy.
   nodeSelector:
@@ -1966,11 +1972,11 @@ envoy:
   # -- Node tolerations for envoy scheduling to nodes with taints
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
   tolerations:
-    - operator: Exists
-      # - key: "key"
-      #   operator: "Equal|Exists"
-      #   value: "value"
-      #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+  - operator: Exists
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
 
   # -- The priority class to use for cilium-envoy.
   priorityClassName: ~
@@ -1987,9 +1993,9 @@ envoy:
       # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
       enabled: false
       # -- Labels to add to ServiceMonitor cilium-envoy
-      labels: { }
+      labels: {}
       # -- Annotations to add to ServiceMonitor cilium-envoy
-      annotations: { }
+      annotations: {}
       # -- Interval for scrape metrics.
       interval: "10s"
       # -- Specify the Kubernetes namespace where Prometheus expects to find
@@ -2089,17 +2095,27 @@ tls:
     #   -----END CERTIFICATE-----
 
 # -- Configure the encapsulation configuration for communication between nodes.
+# Deprecated in favor of tunnelProtocol and routingMode. To be removed in 1.15.
 # Possible values:
 #   - disabled
-#   - vxlan (default)
+#   - vxlan
 #   - geneve
+# @default -- `"vxlan"`
 tunnel: ""
 
 # -- Tunneling protocol to use in tunneling mode and for ad-hoc tunnels.
+# Possible values:
+#   - ""
+#   - vxlan
+#   - geneve
 # @default -- `"vxlan"`
 tunnelProtocol: ""
 
 # -- Enable native-routing mode or tunneling mode.
+# Possible values:
+#   - ""
+#   - native
+#   - tunnel
 # @default -- `"tunnel"`
 routingMode: ""
 
@@ -2134,28 +2150,28 @@ etcd:
   priorityClassName: ""
 
   # -- Additional cilium-etcd-operator container arguments.
-  extraArgs: [ ]
+  extraArgs: []
 
   # -- Additional cilium-etcd-operator volumes.
-  extraVolumes: [ ]
+  extraVolumes: []
 
   # -- Additional cilium-etcd-operator volumeMounts.
-  extraVolumeMounts: [ ]
+  extraVolumeMounts: []
 
   # -- Node tolerations for cilium-etcd-operator scheduling to nodes with taints
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
   tolerations:
-    - operator: Exists
-      # - key: "key"
-      #   operator: "Equal|Exists"
-      #   value: "value"
-      #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+  - operator: Exists
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
 
   # -- Pod topology spread constraints for cilium-etcd-operator
-  topologySpreadConstraints: [ ]
+  topologySpreadConstraints: []
     # - maxSkew: 1
-  #   topologyKey: topology.kubernetes.io/zone
-  #   whenUnsatisfiable: DoNotSchedule
+    #   topologyKey: topology.kubernetes.io/zone
+    #   whenUnsatisfiable: DoNotSchedule
 
   # -- Node labels for cilium-etcd-operator pod assignment
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -2163,13 +2179,13 @@ etcd:
     kubernetes.io/os: linux
 
   # -- Security context to be added to cilium-etcd-operator pods
-  podSecurityContext: { }
+  podSecurityContext: {}
 
   # -- Annotations to be added to cilium-etcd-operator pods
-  podAnnotations: { }
+  podAnnotations: {}
 
   # -- Labels to be added to cilium-etcd-operator pods
-  podLabels: { }
+  podLabels: {}
 
   # PodDisruptionBudget settings
   podDisruptionBudget:
@@ -2184,17 +2200,17 @@ etcd:
 
   # -- cilium-etcd-operator resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-  resources: { }
+  resources: {}
     # limits:
     #   cpu: 4000m
     #   memory: 4Gi
     # requests:
-  #   cpu: 100m
-  #   memory: 512Mi
+    #   cpu: 100m
+    #   memory: 512Mi
 
   # -- Security context to be added to cilium-etcd-operator pods
-  securityContext: { }
-  # runAsUser: 0
+  securityContext: {}
+    # runAsUser: 0
 
   # -- cilium-etcd-operator update strategy
   updateStrategy:
@@ -2230,7 +2246,7 @@ operator:
   image:
     override: ~
     repository: "quay.io/cilium/operator"
-    tag: "v1.14.1"
+    tag: "v1.14.3"
     # operator-generic-digest
     genericDigest: ""
     # operator-azure-digest
@@ -2264,16 +2280,16 @@ operator:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-        - topologyKey: kubernetes.io/hostname
-          labelSelector:
-            matchLabels:
-              io.cilium/app: operator
+      - topologyKey: kubernetes.io/hostname
+        labelSelector:
+          matchLabels:
+            io.cilium/app: operator
 
   # -- Pod topology spread constraints for cilium-operator
-  topologySpreadConstraints: [ ]
+  topologySpreadConstraints: []
     # - maxSkew: 1
-  #   topologyKey: topology.kubernetes.io/zone
-  #   whenUnsatisfiable: DoNotSchedule
+    #   topologyKey: topology.kubernetes.io/zone
+    #   whenUnsatisfiable: DoNotSchedule
 
   # -- Node labels for cilium-operator pod assignment
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -2283,41 +2299,41 @@ operator:
   # -- Node tolerations for cilium-operator scheduling to nodes with taints
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
   tolerations:
-    - operator: Exists
-      # - key: "key"
-      #   operator: "Equal|Exists"
-      #   value: "value"
-      #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+  - operator: Exists
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
 
   # -- Additional cilium-operator container arguments.
-  extraArgs: [ ]
+  extraArgs: []
 
   # -- Additional cilium-operator environment variables.
-  extraEnv: [ ]
+  extraEnv: []
 
   # -- Additional cilium-operator hostPath mounts.
-  extraHostPathMounts: [ ]
+  extraHostPathMounts: []
     # - name: host-mnt-data
     #   mountPath: /host/mnt/data
     #   hostPath: /mnt/data
     #   hostPathType: Directory
-  #   readOnly: true
-  #   mountPropagation: HostToContainer
+    #   readOnly: true
+    #   mountPropagation: HostToContainer
 
   # -- Additional cilium-operator volumes.
-  extraVolumes: [ ]
+  extraVolumes: []
 
   # -- Additional cilium-operator volumeMounts.
-  extraVolumeMounts: [ ]
+  extraVolumeMounts: []
 
   # -- Security context to be added to cilium-operator pods
-  podSecurityContext: { }
+  podSecurityContext: {}
 
   # -- Annotations to be added to cilium-operator pods
-  podAnnotations: { }
+  podAnnotations: {}
 
   # -- Labels to be added to cilium-operator pods
-  podLabels: { }
+  podLabels: {}
 
   # PodDisruptionBudget settings
   podDisruptionBudget:
@@ -2332,17 +2348,17 @@ operator:
 
   # -- cilium-operator resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-  resources: { }
+  resources: {}
     # limits:
     #   cpu: 1000m
     #   memory: 1Gi
     # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+    #   cpu: 100m
+    #   memory: 128Mi
 
   # -- Security context to be added to cilium-operator pods
-  securityContext: { }
-  # runAsUser: 0
+  securityContext: {}
+    # runAsUser: 0
 
   # -- Interval for endpoint garbage collection.
   endpointGCInterval: "5m0s"
@@ -2377,9 +2393,9 @@ operator:
       # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
       enabled: false
       # -- Labels to add to ServiceMonitor cilium-operator
-      labels: { }
+      labels: {}
       # -- Annotations to add to ServiceMonitor cilium-operator
-      annotations: { }
+      annotations: {}
       # -- Interval for scrape metrics.
       interval: "10s"
       # -- Relabeling configs for the ServiceMonitor cilium-operator
@@ -2395,7 +2411,7 @@ operator:
     label: grafana_dashboard
     namespace: ~
     labelValue: "1"
-    annotations: { }
+    annotations: {}
 
   # -- Skip CRDs creation for cilium-operator
   skipCRDCreation: false
@@ -2439,16 +2455,16 @@ nodeinit:
     type: RollingUpdate
 
   # -- Additional nodeinit environment variables.
-  extraEnv: [ ]
+  extraEnv: []
 
   # -- Additional nodeinit volumes.
-  extraVolumes: [ ]
+  extraVolumes: []
 
   # -- Additional nodeinit volumeMounts.
-  extraVolumeMounts: [ ]
+  extraVolumeMounts: []
 
   # -- Affinity for cilium-nodeinit
-  affinity: { }
+  affinity: {}
 
   # -- Node labels for nodeinit pod assignment
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -2458,17 +2474,17 @@ nodeinit:
   # -- Node tolerations for nodeinit scheduling to nodes with taints
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
   tolerations:
-    - operator: Exists
-      # - key: "key"
-      #   operator: "Equal|Exists"
-      #   value: "value"
-      #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+  - operator: Exists
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
 
   # -- Annotations to be added to node-init pods.
-  podAnnotations: { }
+  podAnnotations: {}
 
   # -- Labels to be added to node-init pods.
-  podLabels: { }
+  podLabels: {}
 
   # -- nodeinit resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
@@ -2502,12 +2518,12 @@ nodeinit:
 
   # -- startup offers way to customize startup nodeinit script (pre and post position)
   startup:
-    preScript: ""
-    postScript: ""
+   preScript: ""
+   postScript: ""
   # -- prestop offers way to customize prestop nodeinit script (pre and post position)
   prestop:
-    preScript: ""
-    postScript: ""
+   preScript: ""
+   postScript: ""
 
 preflight:
   # -- Enable Cilium pre-flight resources (required for upgrade)
@@ -2517,7 +2533,7 @@ preflight:
   image:
     override: ~
     repository: "quay.io/cilium/cilium"
-    tag: "v1.14.1"
+    tag: "v1.14.3"
     # cilium-digest
     digest: ""
     useDigest: false
@@ -2531,22 +2547,22 @@ preflight:
     type: RollingUpdate
 
   # -- Additional preflight environment variables.
-  extraEnv: [ ]
+  extraEnv: []
 
   # -- Additional preflight volumes.
-  extraVolumes: [ ]
+  extraVolumes: []
 
   # -- Additional preflight volumeMounts.
-  extraVolumeMounts: [ ]
+  extraVolumeMounts: []
 
   # -- Affinity for cilium-preflight
   affinity:
     podAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-        - topologyKey: kubernetes.io/hostname
-          labelSelector:
-            matchLabels:
-              k8s-app: cilium
+      - topologyKey: kubernetes.io/hostname
+        labelSelector:
+          matchLabels:
+            k8s-app: cilium
 
   # -- Node labels for preflight pod assignment
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -2556,30 +2572,30 @@ preflight:
   # -- Node tolerations for preflight scheduling to nodes with taints
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
   tolerations:
-    - key: node.kubernetes.io/not-ready
-      effect: NoSchedule
-    - key: node-role.kubernetes.io/master
-      effect: NoSchedule
-    - key: node-role.kubernetes.io/control-plane
-      effect: NoSchedule
-    - key: node.cloudprovider.kubernetes.io/uninitialized
-      effect: NoSchedule
-      value: "true"
-    - key: CriticalAddonsOnly
-      operator: "Exists"
-      # - key: "key"
-      #   operator: "Equal|Exists"
-      #   value: "value"
-      #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+  - key: node.kubernetes.io/not-ready
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/control-plane
+    effect: NoSchedule
+  - key: node.cloudprovider.kubernetes.io/uninitialized
+    effect: NoSchedule
+    value: "true"
+  - key: CriticalAddonsOnly
+    operator: "Exists"
+    # - key: "key"
+    #   operator: "Equal|Exists"
+    #   value: "value"
+    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
 
   # -- Security context to be added to preflight pods.
-  podSecurityContext: { }
+  podSecurityContext: {}
 
   # -- Annotations to be added to preflight pods
-  podAnnotations: { }
+  podAnnotations: {}
 
   # -- Labels to be added to the preflight pod.
-  podLabels: { }
+  podLabels: {}
 
   # PodDisruptionBudget settings
   podDisruptionBudget:
@@ -2594,17 +2610,17 @@ preflight:
 
   # -- preflight resource limits & requests
   # ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-  resources: { }
+  resources: {}
     # limits:
     #   cpu: 4000m
     #   memory: 4Gi
     # requests:
-  #   cpu: 100m
-  #   memory: 512Mi
+    #   cpu: 100m
+    #   memory: 512Mi
 
   # -- Security context to be added to preflight pods
-  securityContext: { }
-  # runAsUser: 0
+  securityContext: {}
+    # runAsUser: 0
 
   # -- Path to write the `--tofqdns-pre-cache` file to.
   tofqdnsPreCache: ""
@@ -2641,7 +2657,7 @@ clustermesh:
     # and IPs are used.
     domain: mesh.cilium.io
     # -- List of clusters to be peered in the mesh.
-    clusters: [ ]
+    clusters: []
     # clusters:
     # # -- Name of the cluster
     # - name: cluster1
@@ -2667,7 +2683,7 @@ clustermesh:
     image:
       override: ~
       repository: "quay.io/cilium/clustermesh-apiserver"
-      tag: "v1.14.1"
+      tag: "v1.14.3"
       # clustermesh-apiserver-digest
       digest: ""
       useDigest: false
@@ -2684,7 +2700,7 @@ clustermesh:
         pullPolicy: "IfNotPresent"
 
       # -- Specifies the resources for etcd container in the apiserver
-      resources: { }
+      resources: {}
       #   requests:
       #     cpu: 200m
       #     memory: 256Mi
@@ -2693,11 +2709,11 @@ clustermesh:
       #     memory: 256Mi
 
       # -- Security context to be added to clustermesh-apiserver etcd containers
-      securityContext: { }
+      securityContext: {}
 
       init:
         # -- Specifies the resources for etcd init container in the apiserver
-        resources: { }
+        resources: {}
         #   requests:
         #     cpu: 100m
         #     memory: 100Mi
@@ -2714,29 +2730,29 @@ clustermesh:
       image:
         override: ~
         repository: "quay.io/cilium/kvstoremesh"
-        tag: "v1.14.1"
+        tag: "v1.14.3"
         # kvstoremesh-digest
         digest: ""
         useDigest: false
         pullPolicy: "IfNotPresent"
 
       # -- Additional KVStoreMesh arguments.
-      extraArgs: [ ]
+      extraArgs: []
 
       # -- Additional KVStoreMesh environment variables.
-      extraEnv: [ ]
+      extraEnv: []
 
       # -- Resource requests and limits for the KVStoreMesh container
-      resources: { }
+      resources: {}
         # requests:
         #   cpu: 100m
         #   memory: 64Mi
         # limits:
-      #   cpu: 1000m
-      #   memory: 1024M
+        #   cpu: 1000m
+        #   memory: 1024M
 
       # -- Additional KVStoreMesh volumeMounts.
-      extraVolumeMounts: [ ]
+      extraVolumeMounts: []
 
       # -- KVStoreMesh Security context
       securityContext:
@@ -2764,7 +2780,7 @@ clustermesh:
       # -- Annotations for the clustermesh-apiserver
       # For GKE LoadBalancer, use annotation cloud.google.com/load-balancer-type: "Internal"
       # For EKS LoadBalancer, use annotation service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
-      annotations: { }
+      annotations: {}
 
       # -- The externalTrafficPolicy of service used for apiserver access.
       externalTrafficPolicy:
@@ -2776,28 +2792,28 @@ clustermesh:
     replicas: 1
 
     # -- Additional clustermesh-apiserver arguments.
-    extraArgs: [ ]
+    extraArgs: []
 
     # -- Additional clustermesh-apiserver environment variables.
-    extraEnv: [ ]
+    extraEnv: []
 
     # -- Additional clustermesh-apiserver volumes.
-    extraVolumes: [ ]
+    extraVolumes: []
 
     # -- Additional clustermesh-apiserver volumeMounts.
-    extraVolumeMounts: [ ]
+    extraVolumeMounts: []
 
     # -- Security context to be added to clustermesh-apiserver containers
-    securityContext: { }
+    securityContext: {}
 
     # -- Security context to be added to clustermesh-apiserver pods
-    podSecurityContext: { }
+    podSecurityContext: {}
 
     # -- Annotations to be added to clustermesh-apiserver pods
-    podAnnotations: { }
+    podAnnotations: {}
 
     # -- Labels to be added to clustermesh-apiserver pods
-    podLabels: { }
+    podLabels: {}
 
     # PodDisruptionBudget settings
     podDisruptionBudget:
@@ -2819,28 +2835,28 @@ clustermesh:
     #         cpu: 100m
     #         memory: 64Mi
     # -- Resource requests and limits for the clustermesh-apiserver
-    resources: { }
+    resources: {}
       # requests:
       #   cpu: 100m
       #   memory: 64Mi
       # limits:
-    #   cpu: 1000m
-    #   memory: 1024M
+      #   cpu: 1000m
+      #   memory: 1024M
 
     # -- Affinity for clustermesh.apiserver
     affinity:
       podAntiAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
-          - topologyKey: kubernetes.io/hostname
-            labelSelector:
-              matchLabels:
-                k8s-app: clustermesh-apiserver
+        - topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchLabels:
+              k8s-app: clustermesh-apiserver
 
     # -- Pod topology spread constraints for clustermesh-apiserver
-    topologySpreadConstraints: [ ]
+    topologySpreadConstraints: []
       # - maxSkew: 1
-    #   topologyKey: topology.kubernetes.io/zone
-    #   whenUnsatisfiable: DoNotSchedule
+      #   topologyKey: topology.kubernetes.io/zone
+      #   whenUnsatisfiable: DoNotSchedule
 
     # -- Node labels for pod assignment
     # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -2849,7 +2865,7 @@ clustermesh:
 
     # -- Node tolerations for pod assignment on nodes with taints
     # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-    tolerations: [ ]
+    tolerations: []
 
     # -- clustermesh-apiserver update strategy
     updateStrategy:
@@ -2916,7 +2932,7 @@ clustermesh:
         #   kind: ClusterIssuer
         #   name: ca-issuer
         # -- certmanager issuer used when clustermesh.apiserver.tls.auto.method=certmanager.
-        certManagerIssuerRef: { }
+        certManagerIssuerRef: {}
       # -- Deprecated in favor of tls.ca. To be removed in 1.15.
       # base64 encoded PEM values for the ExternalWorkload CA certificate and private key.
       ca:
@@ -2934,9 +2950,9 @@ clustermesh:
         cert: ""
         key: ""
         # -- Extra DNS names added to certificate when it's auto generated
-        extraDnsNames: [ ]
+        extraDnsNames: []
         # -- Extra IP addresses added to certificate when it's auto generated
-        extraIpAddresses: [ ]
+        extraIpAddresses: []
       # -- base64 encoded PEM values for the clustermesh-apiserver admin certificate and private key.
       # Used if 'auto' is not enabled.
       admin:
@@ -2963,7 +2979,7 @@ clustermesh:
       kvstoremesh:
         # -- Enables exporting KVStoreMesh metrics in OpenMetrics format.
         enabled: true
-        # -- Configure the port the KVStoreMesh metric server listens on.
+         # -- Configure the port the KVStoreMesh metric server listens on.
         port: 9964
 
       etcd:
@@ -2979,9 +2995,9 @@ clustermesh:
         # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
         enabled: false
         # -- Labels to add to ServiceMonitor clustermesh-apiserver
-        labels: { }
+        labels: {}
         # -- Annotations to add to ServiceMonitor clustermesh-apiserver
-        annotations: { }
+        annotations: {}
         # -- Specify the Kubernetes namespace where Prometheus expects to find
         # service monitors configured.
         # namespace: ""
@@ -3025,13 +3041,13 @@ cgroup:
     # volume will be mounted inside the cilium agent pod at the same path.
     enabled: true
     # -- Init Container Cgroup Automount resource limits & requests
-    resources: { }
+    resources: {}
       # limits:
       #   cpu: 100m
       #   memory: 128Mi
       # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      #   cpu: 100m
+      #   memory: 128Mi
   # -- Configure cgroup root where cgroup2 filesystem is mounted on the host (see also: `cgroup.autoMount`)
   hostRoot: /run/cilium/cgroupv2
 
@@ -3084,7 +3100,7 @@ authentication:
   queueSize: 1024
   # -- Buffer size of the channel Cilium uses to receive certificate expiration events from auth handlers.
   rotatedIdentitiesQueueSize: 1024
-  # -- Interval for garbage collection of auth map entries.
+    # -- Interval for garbage collection of auth map entries.
   gcInterval: "5m0s"
   # Configuration for Cilium's service-to-service mutual authentication using TLS handshakes.
   # Note that this is not full mTLS support without also enabling encryption of some form.
@@ -3125,19 +3141,19 @@ authentication:
             create: true
             name: spire-server
           # -- SPIRE server init containers
-          initContainers: [ ]
+          initContainers: []
           # -- SPIRE server annotations
-          annotations: { }
+          annotations: {}
           # -- SPIRE server labels
-          labels: { }
+          labels: {}
           # SPIRE server service configuration
           service:
             # -- Service type for the SPIRE server service
             type: ClusterIP
             # -- Annotations to be added to the SPIRE server service
-            annotations: { }
+            annotations: {}
             # -- Labels to be added to the SPIRE server service
-            labels: { }
+            labels: {}
           # SPIRE server datastorage configuration
           dataStorage:
             # -- Enable SPIRE server data storage
