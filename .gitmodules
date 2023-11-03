@@ -1,0 +1,3 @@
+[submodule "sagitta-charts"]
+    path = deployment/app-chart
+    url = https://github.com/5agitta/sagitta-charts.git
