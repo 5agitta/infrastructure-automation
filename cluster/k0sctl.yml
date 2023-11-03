@@ -1,0 +1,94 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: sagitta
+spec:
+  hosts:
+  - role: controller
+    installFlags:
+      - --disable-components=metrics-server,kube-proxy
+    ssh:
+      address: 35.247.186.155
+      user: coreos
+      keyPath: ~/.ssh/gcloud
+  - role: controller
+    ssh:
+      address: 35.198.238.185
+      user: coreos
+      keyPath: ~/.ssh/gcloud
+  - role: worker
+    ssh:
+      address: 34.124.165.24
+      user: coreos
+      keyPath: ~/.ssh/gcloud
+  - role: worker
+    ssh:
+      address: 34.124.218.189
+      user: coreos
+      keyPath: ~/.ssh/gcloud
+
+  k0s:
+    version: v1.28.2+k0s.0
+    dynamicConfig: false
+    config:
+      apiVersion: k0s.k0sproject.io/v1beta1
+      kind: ClusterConfig
+      metadata:
+        creationTimestamp: null
+        name: sagitta
+      spec:
+        api:
+          address: 35.247.186.155
+          k0sApiPort: 9443
+          port: 6443
+          sans:
+          - 35.247.186.155
+        controllerManager: {}
+        extensions:
+          helm:
+            charts: null
+            concurrencyLevel: 5
+            repositories: null
+          storage:
+            create_default_storage_class: true
+            type: openebs_local_storage
+        images:
+          coredns:
+            image: quay.io/k0sproject/coredns
+            version: 1.11.1
+          default_pull_policy: IfNotPresent
+          konnectivity:
+            image: quay.io/k0sproject/apiserver-network-proxy-agent
+            version: v0.1.4
+          pause:
+            image: registry.k8s.io/pause
+            version: "3.8"
+          pushgateway:
+            image: quay.io/k0sproject/pushgateway-ttl
+            version: 1.4.0-k0s.0
+        installConfig:
+          users:
+            etcdUser: etcd
+            kineUser: kube-apiserver
+            konnectivityUser: konnectivity-server
+            kubeAPIserverUser: kube-apiserver
+            kubeSchedulerUser: kube-scheduler
+        konnectivity:
+          adminPort: 8133
+          agentPort: 8132
+        network:
+          clusterDomain: cluster.local
+          dualStack: {}
+          provider: custom
+          kubeProxy:
+            disabled: true
+          kuberouter: null
+          nodeLocalLoadBalancing:
+            enabled: false
+          podCIDR: 10.37.0.0/16
+          serviceCIDR: 10.41.0.0/16
+        scheduler: {}
+        storage:
+          type: etcd
+        telemetry:
+          enabled: true

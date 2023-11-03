@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: csi-gcs
+spec:
+  template:
+    spec:
+      containers:
+        - name: csi-node-driver-registrar
+          env:
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/k0s/kubelet/plugins/gcs.csi.ofek.dev/csi.sock
+        - name: csi-gcs
+          volumeMounts:
+            - name: mountpoint-dir
+              mountPath: /var/lib/k0s/kubelet/pods
+      volumes:
+        - name: socket-dir
+          hostPath:
+            path: /var/lib/k0s/kubelet/plugins/gcs.csi.ofek.dev
+            type: DirectoryOrCreate
+        - name: mountpoint-dir
+          hostPath:
+            path: /var/lib/k0s/kubelet/pods
+            type: Directory
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/k0s/kubelet/plugins_registry
+            type: Directory
