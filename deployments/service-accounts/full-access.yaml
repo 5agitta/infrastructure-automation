@@ -1,0 +1,30 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: full-access-cluster-role
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: full-access-service-account
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: full-access-cluster-role-binding
+subjects:
+- kind: ServiceAccount
+  name: full-access-service-account
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: full-access-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+

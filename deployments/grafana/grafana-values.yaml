@@ -544,22 +544,21 @@ grafana:
   ##   - name: my-volume
   ##     emptyDir: {}
   ##
-  extraVolumes: {}
-#  extraVolumes:
-#    - name: dashboards-volume
-#      hostpath:
-#        path: /home/appuser/latest/deployments/grafana/dashboards
-#        type: DirectoryOrCreate
+#  extraVolumes: []
+  extraVolumes:
+    - name: dashboards-volume
+      hostPath:
+        path: /home/noman637/Projects/Sagitta/infrastructure/automation/deployments/grafana/dashboards
   ## @param grafana.extraVolumeMounts Additional volume mounts for the Grafana container
   ## Example:
   ## extraVolumeMounts:
   ##   - name: my-volume
   ##     mountPath: /opt/bitnami/grafana/my-stuff
   ##
-  extraVolumeMounts: {}
-#  extraVolumeMounts:
-#    - name: dashboards-volume
-#      mountPath: /opt/bitnami/grafana/dashboards
+#  extraVolumeMounts: []
+  extraVolumeMounts:
+    - name: dashboards-volume
+      mountPath: /opt/bitnami/grafana/dashboards
   ## @param grafana.extraEnvVarsCM Name of existing ConfigMap containing extra env vars for Grafana nodes
   ##
   extraEnvVarsCM: ""
